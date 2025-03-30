@@ -6,6 +6,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { UserNav } from "./_components/user-nav";
+import { IUser } from "@/interfaces";
 
 const users = [
     { name: "Olivia Martin", email: "m@example.com", avatar: "/avatars/01.png" },
@@ -17,45 +19,52 @@ const users = [
 
 type User = typeof users[0]
 
-export default function Page() {
+export default function SidebarPage({ selectedUser }: { selectedUser: Omit<IUser, "password"> | null }) {
+
+    
     const [messages, setMessages] = React.useState([
         { role: "agent", content: "Hi, how can I help you today?" },
         { role: "user", content: "Hey, I'm having trouble with my account." },
         { role: "agent", content: "What seems to be the problem?" },
         { role: "user", content: "I can't log in." },
     ])
-
+    
     const [input, setInput] = React.useState("")
     const inputLength = input.trim().length
-
+    
     const messagesEndRef = React.useRef<HTMLDivElement>(null)
-
+    
     // Function to scroll to bottom of messages
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
-
+    
     // Scroll to bottom when messages change
     React.useEffect(() => {
         scrollToBottom()
     }, [messages])
-
+    
+    if (!selectedUser) {
+        return <div className="flex justify-center items-center h-full">No user selected</div>
+    }
+    
     return (
         <div className="flex flex-col h-full">
             {/* User Info (fixed height) */}
-            <div className="flex-none p-4">
+            <div className="flex-none p-4 sticky top-0 bg-gray-300">
                 <div className="flex justify-between space-x-4">
                     <div className="flex items-center space-x-4">
+                        <SidebarTrigger className="flex-none" />
                         <Avatar>
-                            <AvatarImage src="/avatars/01.png" alt="Image" />
+                            <AvatarImage src="https://github.com/shadcn.png" alt="Image" />
                             <AvatarFallback>OM</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="text-sm font-medium leading-none">Sofia Davis</p>
-                            <p className="text-sm text-muted-foreground">m@example.com</p>
+                            <p className="text-sm font-medium leading-none">{selectedUser.name}</p>
+                            <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
                         </div>
                     </div>
-                    <SidebarTrigger className="flex-none" />
+                    <UserNav />
                 </div>
             </div>
 
