@@ -1,0 +1,17 @@
+# Dockerignore file for Next.js application
+node_modules
+.next
+out
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+Dockerfile
+.dockerignore
+.git
+.github
+.gitignore
+*.md
+docker-compose*
+*.example

@@ -20,6 +20,23 @@ services:
     volumes:
       - chat_app_backend-data:/app/data
 
+  chat_app_frontend:
+    container_name: chat_app_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - chat_app_backend
+    networks:
+      - app-network
+    volumes:
+      - chat_app_frontend-data:/app/data
+      
+
   chat_app_postgres:
     image: postgres:17
     container_name: chat_app_postgres
@@ -53,5 +70,6 @@ services:
 
 volumes:
   chat_app_backend-data:
+  chat_app_frontend-data:
   chat_app_postgres-data:
   chat_app_pgadmin_data:
