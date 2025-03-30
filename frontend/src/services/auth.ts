@@ -1,7 +1,6 @@
 import api from "@/lib/api";
 import { IUser } from "@/interfaces";
 import { useAuthStore } from "@/store/auth.store";
-
 export const registerUser = async (
   formData: Pick<IUser, "name" | "email" | "password">
 ) => {
@@ -15,7 +14,6 @@ export const loginUser = async (
   const response = await api.post("/users/login", formData);
   const { data } = response.data;
   useAuthStore.getState().login(data.user, data.token);
-
   return response.data;
 };
 
@@ -24,10 +22,8 @@ export const logoutUser = () => {
   window.location.href = "/login";
 };
 
-export const getCurrentUser = async (
-  userId: string
-): Promise<Omit<IUser, "password">> => {
-  const response = await api.get(`/users/${userId}`);
+export const getCurrentUser = async (): Promise<Omit<IUser, "password">> => {
+  const response = await api.get(`/users/me`);
   return response.data;
 };
 

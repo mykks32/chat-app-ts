@@ -17,6 +17,7 @@ import { loginUserSchema } from "@/schemas"
 import type { z } from "zod"
 import { useMutation } from "@tanstack/react-query"
 import userService from "@/services/auth"
+import { useRouter } from "next/navigation"
 
 type LoginSchema = z.infer<typeof loginUserSchema>
 
@@ -26,16 +27,19 @@ export default function Login() {
     })
 
     console.log("form", watch())
+    const router = useRouter();
 
     const mutate = useMutation({
         mutationFn: (data: LoginSchema) => userService.loginUser(data),
-        onSuccess: (data) => {
-            console.log("data", data)
+        onSuccess: async (data) => {
+            console.log("Login successful, redirecting...");
+            await router.push("/chat");
+            window.location.reload();
         },
         onError: (error) => {
-            console.log("error", error)
+            console.error("Login failed:", error);
         }
-    })
+    });
 
 
 
