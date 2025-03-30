@@ -1,0 +1,57 @@
+version: '3.8'
+
+networks:
+  app-network:
+
+services:
+  chat_app_backend:
+    container_name: chat_app_backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - chat_app_postgres
+    networks:
+      - app-network
+    volumes:
+      - chat_app_backend-data:/app/data
+
+  chat_app_postgres:
+    image: postgres:17
+    container_name: chat_app_postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chat_app_ts
+    networks:
+      - app-network
+    volumes:
+      - chat_app_postgres-data:/var/lib/postgresql/data
+
+  chat_app_pgadmin:
+    image: dpage/pgadmin4
+    container_name: chat_app_pgadmin
+    restart: always
+    ports:
+      - "5051:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    depends_on:
+      - chat_app_postgres
+    networks:
+      - app-network
+    volumes:
+      - chat_app_pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  chat_app_backend-data:
+  chat_app_postgres-data:
+  chat_app_pgadmin_data:

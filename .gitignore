@@ -1,8 +1,41 @@
-# Node.js dependencies
 node_modules/
-.env
 dist/
+.env
+*.log
 .DS_Store
-package-lock.json
-pnpm-lock.yaml
+coverage/
+.idea/
+.vscode/
+*.tsbuildinfo
 
+# Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-specific files
+Thumbs.db
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Build output
+dist/
+out/
+
+# Dependencies
+package-lock.json
+yarn.lock
+
+# Debugging files
+*.log
+
+# Misc
+.nyc_output/
+.eslintcache
+
+#view for development only
+backend/src/database/
