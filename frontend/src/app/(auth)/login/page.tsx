@@ -13,22 +13,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { registerUserSchema } from "@/schemas"
+import { loginUserSchema } from "@/schemas"
 import type { z } from "zod"
 import { useMutation } from "@tanstack/react-query"
-import { registerUser } from "@/services/auth"
+import userService from "@/services/auth"
 
-type RegisterSchema = z.infer<typeof registerUserSchema>
+type LoginSchema = z.infer<typeof loginUserSchema>
 
-export default function CardsCreateAccount() {
-    const { register, handleSubmit, formState: { errors }, watch } = useForm<RegisterSchema>({
-        resolver: zodResolver(registerUserSchema),
+export default function Login() {
+    const { register, handleSubmit, formState: { errors }, watch } = useForm<LoginSchema>({
+        resolver: zodResolver(loginUserSchema),
     })
 
     console.log("form", watch())
 
     const mutate = useMutation({
-        mutationFn: (data: RegisterSchema) => registerUser(data),
+        mutationFn: (data: LoginSchema) => userService.loginUser(data),
         onSuccess: (data) => {
             console.log("data", data)
         },
@@ -39,7 +39,7 @@ export default function CardsCreateAccount() {
 
 
 
-    const onSubmit = (data: RegisterSchema) => {
+    const onSubmit = (data: LoginSchema) => {
         mutate.mutate(data)
     }
 
@@ -48,17 +48,12 @@ export default function CardsCreateAccount() {
             <div className="flex justify-center items-center h-screen px-4">
                 <Card className="w-full max-w-md sm:max-w-lg">
                     <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl">Create an account</CardTitle>
+                        <CardTitle className="text-2xl">Login to your account</CardTitle>
                         <CardDescription>
-                            Enter your email below to create your account
+                            Enter your email below to login to your account
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
-                            <Input id="name" type="text" placeholder="John Doe" {...register("name")} />
-                            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
-                        </div>
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input id="email" type="email" placeholder="m@example.com" {...register("email")} />
@@ -71,7 +66,7 @@ export default function CardsCreateAccount() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" type="submit">Create account</Button>
+                        <Button className="w-full" type="submit">Login</Button>
                     </CardFooter>
                 </Card>
             </div>

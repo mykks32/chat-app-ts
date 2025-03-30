@@ -49,16 +49,10 @@ export const registerUser = async (req: Request, res: Response) => {
 
     delete newUser.password;
 
-    // Generate JWT token
-    const token = newUser.generateToken();
-
     // Response
     return res.status(OK).json({
       message: "User registered successfully",
-      data: {
-        user: newUser,
-        token,
-      },
+      data: newUser,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

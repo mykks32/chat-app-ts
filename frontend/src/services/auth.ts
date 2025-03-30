@@ -13,9 +13,8 @@ export const loginUser = async (
   formData: Pick<IUser, "email" | "password">
 ) => {
   const response = await api.post("/users/login", formData);
-
-  const { user, token } = response.data;
-  useAuthStore.getState().login(user, token);
+  const { data } = response.data;
+  useAuthStore.getState().login(data.user, data.token);
 
   return response.data;
 };
@@ -35,4 +34,12 @@ export const getCurrentUser = async (
 export const getAllUsers = async (): Promise<Omit<IUser, "password">[]> => {
   const response = await api.get("/users");
   return response.data;
+};
+
+export default {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getCurrentUser,
+  getAllUsers,
 };
