@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/auth.store";
 import axios from "axios";
 
 const api = axios.create({
@@ -8,7 +9,13 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    // TODO: Add token to request header form zustand store
+    // Get token from zustand store
+    const { token } = useAuthStore.getState();
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
 });
 
