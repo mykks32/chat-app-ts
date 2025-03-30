@@ -5,7 +5,7 @@ import { User } from "@entity";
 import { registerUserSchema } from "@schemas";
 import { z } from "zod";
 import { loginUserSchema } from "src/schemas/user.schema";
-
+import { AuthenticatedRequest } from "@middlewares/auth.middleware";
 const {
   OK,
   INTERNAL_SERVER_ERROR,
@@ -14,6 +14,7 @@ const {
   UNAUTHORIZED,
   FORBIDDEN,
 } = StatusCodes;
+
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -126,7 +127,7 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
   try {
     // User repository
     const userRepository = AppDataSource.getRepository(User);
@@ -154,9 +155,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserInfo = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(BAD_REQUEST).json({
