@@ -60,7 +60,7 @@ export function AppSidebar({ setSelectedUser, setRoom }: { setSelectedUser: (use
                     <div className="flex items-center space-x-4">
                       <Avatar className="size-10">
                         <AvatarImage src="https://github.com/shadcn.png" alt="Image" />
-                        <AvatarFallback className="text-gray-300 text-black">
+                        <AvatarFallback className="text-black">
                           {user.name.slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>

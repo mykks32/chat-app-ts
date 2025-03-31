@@ -2,21 +2,19 @@ import { IMessage } from "@/interfaces";
 import { io, Socket } from "socket.io-client";
 import { getCookie } from "@/lib/session";
 
-// Create socket as a singleton
+// Singleton socket instance
 let socket: Socket | null = null;
 
 // Initialize socket
 const initializeSocket = async () => {
   const token = await getCookie("chat-token");
-  socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!, {
+  socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
     autoConnect: false,
-    auth: {
-      token: token,
-    },
+    auth: { token },
   });
 };
 
-// Ensure socket is initialized before use
+// Get or initialize socket instance
 const getSocket = async (): Promise<Socket> => {
   if (!socket) {
     await initializeSocket();
@@ -24,19 +22,31 @@ const getSocket = async (): Promise<Socket> => {
   return socket!;
 };
 
-// Handle connect socket
+// Connect socket
 const connectSocket = async () => {
   const s = await getSocket();
-  s.connect();
-  s.on("connect", () => {
-    console.log("Connected to socket server");
-  });
+  if (!s.connected) {
+    s.connect();
+  }
+  s.on("connect", () => console.log("Connected to socket server"));
+};
+
+// Remove all socket listeners
+const removeSocketListeners = async () => {
+  const s = await getSocket();
+  s.off("connect");
+  s.off("disconnect");
+  s.off("user_joined");
+  s.off("room_messages");
+  s.off("new-message");
+  s.off("typing");
+  s.off("user_left");
 };
 
 // Notify user joined room
 const notifyUserJoinedRoom = async () => {
   const s = await getSocket();
-  s.on("user_joined", ({ userId, roomId }) => {
+  s.off("user_joined").on("user_joined", ({ userId, roomId }) => {
     console.log(`User ${userId} joined room ${roomId}`);
   });
 };
@@ -44,7 +54,7 @@ const notifyUserJoinedRoom = async () => {
 // Handle receive messages
 const handleReceiveMessages = async (callback: (roomId: string, messages: IMessage[]) => void) => {
   const s = await getSocket();
-  s.on("room_messages", (roomId: string, messages: IMessage[]) => {
+  s.off("room_messages").on("room_messages", (roomId: string, messages: IMessage[]) => {
     callback(roomId, messages);
   });
 };
@@ -58,7 +68,7 @@ const handleSendMessage = async (roomId: string, content: string, senderId: stri
 // Handle new message
 const handleNewMessage = async (callback: (message: IMessage) => void) => {
   const s = await getSocket();
-  s.on("new-message", (message: IMessage) => {
+  s.off("new-message").on("new-message", (message: IMessage) => {
     callback(message);
   });
 };
@@ -72,7 +82,7 @@ const handleTyping = async (roomId: string, userId: string, name: string, isTypi
 // Receive typing
 const handleReceiveTyping = async (callback: (userId: string, name: string, isTyping: boolean) => void) => {
   const s = await getSocket();
-  s.on("typing", ({ userId, name, isTyping }) => {
+  s.off("typing").on("typing", ({ userId, name, isTyping }) => {
     callback(userId, name, isTyping);
   });
 };
@@ -92,7 +102,7 @@ const handleUserLeaveRoom = async (userId: string, roomId: string) => {
 // Handle user left room
 const handleUserLeftRoom = async (callback: (userId: string, roomId: string) => void) => {
   const s = await getSocket();
-  s.on("user_left", ({ userId, roomId }) => {
+  s.off("user_left").on("user_left", ({ userId, roomId }) => {
     callback(userId, roomId);
   });
 };
@@ -101,18 +111,7 @@ const handleUserLeftRoom = async (callback: (userId: string, roomId: string) => 
 const disconnectSocket = async () => {
   const s = await getSocket();
   s.disconnect();
-};
-
-// Remove all socket listeners
-const removeSocketListeners = async () => {
-  const s = await getSocket();
-  s.off("connect");
-  s.off("disconnect");
-  s.off("user_joined");
-  s.off("room_messages");
-  s.off("new-message");
-  s.off("typing");
-  s.off("user_left");
+  removeSocketListeners();
 };
 
 // Export all functions together
