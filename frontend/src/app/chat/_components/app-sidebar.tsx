@@ -13,154 +13,36 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import userService from "@/services/auth"
-import { IUser } from "@/interfaces"
+import roomService from "@/services/room"
+import { IRoom, IUser } from "@/interfaces"
+import { useAuthStore } from "@/store/auth.store"
 
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-]
 
-export function AppSidebar({ setSelectedUser }: { setSelectedUser: (user: Omit<IUser, "password">) => void }) {
-
+export function AppSidebar({ setSelectedUser, setRoom }: { setSelectedUser: (user: Omit<IUser, "password">) => void, setRoom: (room: IRoom) => void }) {
+  const { user: currentUser } = useAuthStore.getState()
   const {data: users} = useQuery({
     queryKey: ["users"],
     queryFn: () => userService.getAllUsers(),
   })
 
-  
-  console.log(users)
+  const mutate = useMutation({
+    mutationFn: (userId: string) => {
+      if (!currentUser) throw new Error("User not authenticated");
+      return roomService.createOrGetRoomMessage(currentUser.id, userId);
+    },
+    onSuccess: (data) => {
+      setRoom(data.data)
+    },
+  })
 
   const [activeItem, setActiveItem] = useState<Omit<IUser, "password"> | null>(null)
 
   const handleUserClick = (user: Omit<IUser, "password">) => {
     setSelectedUser(user)
     setActiveItem(user)
+    mutate.mutate(user.id)
   }
 
   return (

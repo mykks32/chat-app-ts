@@ -7,47 +7,63 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserNav } from "./_components/user-nav";
-import { IUser } from "@/interfaces";
+import { IRoom, IUser, IMessage } from "@/interfaces";
+import socketService from "@/services/socket.service";
 
-const users = [
-    { name: "Olivia Martin", email: "m@example.com", avatar: "/avatars/01.png" },
-    { name: "Isabella Nguyen", email: "isabella.nguyen@email.com", avatar: "/avatars/03.png" },
-    { name: "Emma Wilson", email: "emma@example.com", avatar: "/avatars/05.png" },
-    { name: "Jackson Lee", email: "lee@example.com", avatar: "/avatars/02.png" },
-    { name: "William Kim", email: "will@email.com", avatar: "/avatars/04.png" },
-]
+export default function SidebarPage({ selectedUser, room }: { selectedUser: Omit<IUser, "password"> | null, room: IRoom | null }) {
 
-type User = typeof users[0]
+    console.log(" in sidebar page", selectedUser, room)
+    const [messages, setMessages] = React.useState<IMessage[]>([])
 
-export default function SidebarPage({ selectedUser }: { selectedUser: Omit<IUser, "password"> | null }) {
-
-    
-    const [messages, setMessages] = React.useState([
-        { role: "agent", content: "Hi, how can I help you today?" },
-        { role: "user", content: "Hey, I'm having trouble with my account." },
-        { role: "agent", content: "What seems to be the problem?" },
-        { role: "user", content: "I can't log in." },
-    ])
-    
     const [input, setInput] = React.useState("")
     const inputLength = input.trim().length
-    
+
     const messagesEndRef = React.useRef<HTMLDivElement>(null)
-    
+
+    const { connectSocket,
+        notifyUserJoinedRoom,
+        handleReceiveMessages,
+        handleSendMessage,
+        handleTyping,
+        handleReceiveTyping,
+        handleJoinRoom,
+        handleUserLeaveRoom,
+        handleUserLeftRoom,
+        disconnectSocket } = socketService
+
+    React.useEffect(() => {
+        connectSocket();
+        if (room && selectedUser) {
+            handleJoinRoom(room.id, selectedUser.id);
+            handleReceiveMessages((roomId, messages) => {
+                if (roomId === room.id) {
+                    setMessages(messages);
+                }
+            });
+        }
+    }, [selectedUser, room])
+
     // Function to scroll to bottom of messages
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
-    
+
     // Scroll to bottom when messages change
     React.useEffect(() => {
         scrollToBottom()
     }, [messages])
-    
-    if (!selectedUser) {
+
+    const sendMessage = () => {
+        if (!input.trim() || !room || !selectedUser) return;
+        
+        handleSendMessage(room.id, input.trim(), selectedUser.id);
+        setInput("");
+    };
+
+    if (!selectedUser || !room) {
         return <div className="flex justify-center items-center h-full">No user selected</div>
     }
-    
+
     return (
         <div className="flex flex-col h-full">
             {/* User Info (fixed height) */}
@@ -75,7 +91,7 @@ export default function SidebarPage({ selectedUser }: { selectedUser: Omit<IUser
                         key={index}
                         className={cn(
                             "flex w-max max-w-[75%] flex-col gap-2 rounded-2xl px-3 py-2 text-sm",
-                            message.role === "user"
+                            message.senderId === selectedUser?.id
                                 ? "ml-auto bg-violet-700 text-primary-foreground"
                                 : "bg-muted"
                         )}
@@ -92,7 +108,7 @@ export default function SidebarPage({ selectedUser }: { selectedUser: Omit<IUser
                     onSubmit={(event) => {
                         event.preventDefault()
                         if (inputLength === 0) return
-                        setMessages([...messages, { role: "user", content: input }])
+                        // setMessages([...messages, { senderId: selectedUser?.id, content: input }])
                         setInput("")
                     }}
                     className="flex w-full items-center space-x-2"
