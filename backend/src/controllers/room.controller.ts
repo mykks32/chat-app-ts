@@ -18,7 +18,6 @@ export const createOrGetRoomMessage = async (req: Request, res: Response) => {
   try {
     createOrGetRoomMessageSchema.parse({
       body: req.body,
-      query: req.query,
     });
 
     const { userId1, userId2 } = req.body;
@@ -66,26 +65,26 @@ export const createOrGetRoomMessage = async (req: Request, res: Response) => {
     }
 
     // Get Room Message for the Room
-    const messageRepository = AppDataSource.getRepository(Message);
-    const limit = parseInt(req.query.limit as string) || 10;
-    const offset = parseInt(req.query.offset as string) || 0;
+    // const messageRepository = AppDataSource.getRepository(Message);
+    // const limit = parseInt(req.query.limit as string) || 10;
+    // const offset = parseInt(req.query.offset as string) || 0;
 
-    const messages = await messageRepository.find({
-      where: {
-        roomId: room.id,
-      },
-      relations: ["sender"],
-      order: {
-        createdAt: "DESC",
-      },
-      skip: offset,
-      take: limit,
-    });
+    // const messages = await messageRepository.find({
+    //   where: {
+    //     roomId: room.id,
+    //   },
+    //   relations: ["sender"],
+    //   order: {
+    //     createdAt: "DESC",
+    //   },
+    //   skip: offset,
+    //   take: limit,
+    // });
 
     // Response
     return res.status(OK).json({
       message: "Room message fetched successfully",
-      data: messages,
+      data: room,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

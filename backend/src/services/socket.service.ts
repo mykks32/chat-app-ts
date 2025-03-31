@@ -66,7 +66,7 @@ class SocketService {
         });
 
         // Send recent messages to client
-        socket.emit("room_messages", {
+        socket.to(roomId).emit("room_messages", {
           roomId,
           messages: recentMessages.reverse(),
         });

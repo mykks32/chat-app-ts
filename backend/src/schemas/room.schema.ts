@@ -13,24 +13,26 @@ export const createOrGetRoomMessageSchema = z.object({
       .uuid("Invalid userId2 format")
       .min(1, "userId2 is required"),
   }),
+})
+
 
   // Query parameters for limit and offset
-  query: z.object({
-    limit: z
-      .string()
-      .optional()
-      .transform((val) => parseInt(val, 10))
-      .refine(
-        (val) => !isNaN(val) && val > 0,
-        "Limit must be a positive number"
-      ),
-    offset: z
-      .string()
-      .optional()
-      .transform((val) => parseInt(val, 10))
-      .refine(
-        (val) => !isNaN(val) && val >= 0,
-        "Offset must be a non-negative number"
-      ),
-  }),
-});
+//   query: z.object({
+//     limit: z
+//       .string()
+//       .optional()
+//       .transform((val) => parseInt(val, 10))
+//       .refine(
+//         (val) => !isNaN(val) && val > 0,
+//         "Limit must be a positive number"
+//       ),
+//     offset: z
+//       .string()
+//       .optional()
+//       .transform((val) => parseInt(val, 10))
+//       .refine(
+//         (val) => !isNaN(val) && val >= 0,
+//         "Offset must be a non-negative number"
+//       ),
+//   }),
+// });
