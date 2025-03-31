@@ -1,24 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCookie } from "./lib/session";
 
+const isLoginRegisterPage = (pathname: string) => {
+  return pathname === "/login" || pathname === "/register";
+};
+
 export default async function middleware(request: NextRequest) {
-  const user = await getCookie("user");
-  const token = await getCookie("chat-token");
-  const path = request.nextUrl.pathname;
+  const token = request.cookies.get("chat-token");
+  const pathname = request.nextUrl.pathname;
 
   // Redirect root ("/") to /chat
-  if (path === "/") {
+  if (pathname === "/") {
     return NextResponse.redirect(new URL("/chat", request.url));
   }
 
-  // Redirect to login if trying to access /chat without being logged in
-  if (path === "/chat" && (!user || !token)) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!token && !isLoginRegisterPage(pathname)) {
+    const response = NextResponse.redirect(new URL("/login", request.url), {
+      status: 303,
+    });
+    return response;
   }
 
-  // Redirect logged-in user to /chat if trying to access /login or /register
-  if ((path === "/login" || path === "/register") && user && token) {
-    return NextResponse.redirect(new URL("/chat", request.url));
+  if (isLoginRegisterPage(pathname)) {
+    if (token) {
+      return NextResponse.redirect(new URL("/chat", request.url));
+    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();
