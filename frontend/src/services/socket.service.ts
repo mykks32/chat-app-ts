@@ -1,133 +1,81 @@
-import { IMessage } from "@/interfaces";
 import { io, Socket } from "socket.io-client";
 import { getCookie } from "@/lib/session";
 
-// Singleton socket instance
-let socket: Socket | null = null;
+const SOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
+let socket: Socket;
 
-// Initialize socket
-const initializeSocket = async () => {
+export const connectSocket = async () => {
   const token = await getCookie("chat-token");
-  socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
-    autoConnect: false,
+  socket = io(SOCKET_URL!, {
+    autoConnect: true,
     auth: { token },
   });
+
+  socket.connect();
+  socket.on("connect", () => console.log("Connected to socket server"));
+
+  return socket;
 };
 
-// Get or initialize socket instance
-const getSocket = async (): Promise<Socket> => {
-  if (!socket) {
-    await initializeSocket();
+export { socket }; 
+
+export const joinRoom = (roomId: string, userId: string) => {
+  if (socket) {
+    socket.emit("joinRoom", { roomId, userId });
   }
-  return socket!;
 };
 
-// Connect socket
-const connectSocket = async () => {
-  const s = await getSocket();
-  if (!s.connected) {
-    s.connect();
+export const onRoomMessages = (
+  callback: (data: { roomId: string; messages: any[] }) => void
+) => {
+  if (socket) {
+    socket.on("room_messages", callback);
   }
-  s.on("connect", () => console.log("Connected to socket server"));
 };
 
-// Remove all socket listeners
-const removeSocketListeners = async () => {
-  const s = await getSocket();
-  s.off("connect");
-  s.off("disconnect");
-  s.off("user_joined");
-  s.off("room_messages");
-  s.off("new-message");
-  s.off("typing");
-  s.off("user_left");
+export const sendMessage = (data: {
+  roomId: string;
+  content: string;
+  senderId: string;
+}) => {
+  if (socket) {
+    socket.emit("sendMessage", data);
+  }
 };
 
-// Notify user joined room
-const notifyUserJoinedRoom = async () => {
-  const s = await getSocket();
-  s.off("user_joined").on("user_joined", ({ userId, roomId }) => {
-    console.log(`User ${userId} joined room ${roomId}`);
-  });
+export const onNewMessage = (callback: (message: any) => void) => {
+  if (socket) {
+    socket.on("new_message", callback);
+  }
 };
 
-// Handle receive messages
-const handleReceiveMessages = async (callback: (roomId: string, messages: IMessage[]) => void) => {
-  const s = await getSocket();
-  s.off("room_messages").on("room_messages", (roomId: string, messages: IMessage[]) => {
-    callback(roomId, messages);
-  });
+export const onError = (callback: (error: { message: string }) => void) => {
+  if (socket) {
+    socket.on("error", callback);
+  }
 };
 
-// Handle send message
-const handleSendMessage = async (roomId: string, content: string, senderId: string) => {
-  const s = await getSocket();
-  s.emit("send-message", { roomId, content, senderId });
+export const disconnectSocket = () => {
+  if (socket) {
+    socket.disconnect();
+  }
 };
 
-// Handle new message
-const handleNewMessage = async (callback: (message: IMessage) => void) => {
-  const s = await getSocket();
-  s.off("new-message").on("new-message", (message: IMessage) => {
-    callback(message);
-  });
+export const removeAllListeners = () => {
+  if (socket) {
+    socket.off("room_messages");
+    socket.off("new_message");
+    socket.off("error");
+  }
 };
 
-// Handle typing
-const handleTyping = async (roomId: string, userId: string, name: string, isTyping: boolean) => {
-  const s = await getSocket();
-  s.emit("typing", { roomId, userId, name, isTyping });
-};
-
-// Receive typing
-const handleReceiveTyping = async (callback: (userId: string, name: string, isTyping: boolean) => void) => {
-  const s = await getSocket();
-  s.off("typing").on("typing", ({ userId, name, isTyping }) => {
-    callback(userId, name, isTyping);
-  });
-};
-
-// Handle join room
-const handleJoinRoom = async (roomId: string, userId: string) => {
-  const s = await getSocket();
-  s.emit("join-room", { roomId, userId });
-};
-
-// Handle user leaving room
-const handleUserLeaveRoom = async (userId: string, roomId: string) => {
-  const s = await getSocket();
-  s.emit("leave-room", { userId, roomId });
-};
-
-// Handle user left room
-const handleUserLeftRoom = async (callback: (userId: string, roomId: string) => void) => {
-  const s = await getSocket();
-  s.off("user_left").on("user_left", ({ userId, roomId }) => {
-    callback(userId, roomId);
-  });
-};
-
-// Handle disconnect socket
-const disconnectSocket = async () => {
-  const s = await getSocket();
-  s.disconnect();
-  removeSocketListeners();
-};
-
-// Export all functions together
-const socketService = {
+export default {
   connectSocket,
-  notifyUserJoinedRoom,
-  handleReceiveMessages,
-  handleSendMessage,
-  handleTyping,
-  handleReceiveTyping,
-  handleJoinRoom,
-  handleUserLeaveRoom,
-  handleUserLeftRoom,
+  joinRoom,
+  onRoomMessages,
+  sendMessage,
+  onNewMessage,
+  onError,
   disconnectSocket,
-  handleNewMessage,
-  removeSocketListeners,
+  removeAllListeners,
 };
-
-export default socketService;
