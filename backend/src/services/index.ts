@@ -1,4 +1,4 @@
-import { socketService } from "./socket.service";
+import socketService from "./socket.service";
 
 export default {
   socketService,

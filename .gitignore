@@ -36,3 +36,7 @@ backend/src/database/
 out/
 .vercel/
 .npm/
+
+// unused
+/backend/unused
+/frontend/unused
