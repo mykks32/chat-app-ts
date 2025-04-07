@@ -15,7 +15,7 @@ const Page = () => {
 
   const [selectedUser, setSelectedUser] = useState<Omit<IUser, "password"> | null>(null)
   const [room, setRoom] = useState<IRoom | null>(null)
-
+  
   useEffect(() => {
     if (!user && !loading) {
       router.push("/login")

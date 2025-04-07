@@ -22,16 +22,13 @@ import Link from "next/link"
 type LoginSchema = z.infer<typeof loginUserSchema>
 
 export default function Login() {
-    const { register, handleSubmit, formState: { errors }, watch } = useForm<LoginSchema>({
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginSchema>({
         resolver: zodResolver(loginUserSchema),
     })
-
-    console.log("form", watch())
 
     const mutate = useMutation({
         mutationFn: (data: LoginSchema) => userService.loginUser(data),
         onSuccess: async () => {
-            console.log("Login successful, redirecting...");
             setTimeout(() => {
                 window.location.href = "/";
             }, 1000);

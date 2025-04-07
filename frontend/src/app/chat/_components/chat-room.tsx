@@ -48,7 +48,6 @@ function ChatRoom({ selectedUser, room }: {
     React.useEffect(() => {
         if (socket) {
             onRoomMessages((data) => {
-                console.log("new messages received of the room", data);
                 if (data.roomId === room?.id) {
                     setMessages((prevMessages) => {
                         const newMessages = data.messages.filter(
@@ -64,7 +63,6 @@ function ChatRoom({ selectedUser, room }: {
     React.useEffect(() => {
         if (socket) {
             onNewMessage((message) => {
-                console.log("new message received", message);
                 if (message.roomId === room?.id) {
                     setMessages((prev) => {
                         if (!prev.some((msg) => msg.id === message.id)) {
@@ -88,11 +86,6 @@ function ChatRoom({ selectedUser, room }: {
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
         if (input.trim() && room?.id && selectedUser?.id) {
-            console.log("Sending message:", {
-                roomId: room.id,
-                content: input,
-                senderId: selectedUser.id,
-            });
             sendMessage({
                 roomId: room.id,
                 content: input,

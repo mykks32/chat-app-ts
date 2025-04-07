@@ -13,7 +13,6 @@ export const loginUser = async (
 ) => {
   const response = await api.post("/users/login", formData);
   const { data } = response.data;
-  console.log("User logged in", data);
   useAuthStore.getState().login(data.user, data.token);
   return response.data;
 };

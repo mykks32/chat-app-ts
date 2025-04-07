@@ -30,11 +30,10 @@ export default function CardsCreateAccount() {
     const mutate = useMutation({
         mutationFn: (data: RegisterSchema) => registerUser(data),
         onSuccess: (data) => {
-            console.log("data", data)
             router.push("/login")
         },
         onError: (error) => {
-            console.log("error", error)
+            console.error("error", error)
         }
     })
 
