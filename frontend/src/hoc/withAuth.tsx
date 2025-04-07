@@ -2,12 +2,10 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
 
-interface WithAuthProps {
-    [key: string]: unknown;
-}
-
-const withAuth = <P extends WithAuthProps>(WrappedComponent: React.ComponentType<P>) => {
-    const WithAuthComponent = (props: P) => {
+const withAuth = <P extends Record<string, unknown>>(
+    WrappedComponent: React.ComponentType<P>
+  ): React.FC<P> => {
+    const WithAuthComponent: React.FC<P> = (props) => {
         const user = useAuthStore((state) => state.user);
         const loading = useAuthStore((state) => state.loading);
         const router = useRouter();
