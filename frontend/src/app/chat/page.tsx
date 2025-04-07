@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserNav } from "./_components/user-nav";
 import { IRoom, IUser, IMessage } from "@/interfaces";
-import socketService, { socket } from "@/services/socket.service";
+import socketService from "@/services/socket.service";
 import { Socket } from "socket.io-client";
 
 export default function ChatRoom({ selectedUser, room }: { 
@@ -26,7 +26,6 @@ export default function ChatRoom({ selectedUser, room }: {
     onRoomMessages,
     sendMessage,
     onNewMessage,
-    onError,
     disconnectSocket,
     removeAllListeners,
   } = socketService;

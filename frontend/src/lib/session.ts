@@ -1,8 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { SerializeOptions } from "cookie";
 
-export const setCookie = async (name: string, value: string, options: any = {}) => {
+export const setCookie = async (name: string, value: string, options: SerializeOptions = {}) => {
   const cookieStore = await cookies();
   cookieStore.set(name, value, options);
 };

@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/store/auth.store";
 import axios from "axios";
 import { getCookie } from "./session";
 

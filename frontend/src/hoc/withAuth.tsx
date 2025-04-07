@@ -4,8 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
 
-const withAuth = (WrappedComponent: React.ComponentType<any>) => {
-    const WithAuthComponent = (props: any) => {
+interface WithAuthProps {
+    [key: string]: any;
+}
+
+const withAuth = <P extends WithAuthProps>(WrappedComponent: React.ComponentType<P>) => {
+    const WithAuthComponent = (props: P) => {
         const user = useAuthStore((state) => state.user);
         const loading = useAuthStore((state) => state.loading);
         const router = useRouter();

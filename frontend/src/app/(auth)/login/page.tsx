@@ -30,7 +30,7 @@ export default function Login() {
 
     const mutate = useMutation({
         mutationFn: (data: LoginSchema) => userService.loginUser(data),
-        onSuccess: async (data) => {
+        onSuccess: async () => {
             console.log("Login successful, redirecting...");
             setTimeout(() => {
                 window.location.href = "/";

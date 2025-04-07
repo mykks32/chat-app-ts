@@ -45,6 +45,7 @@ export const useAuthStore = create<AuthStore>()(
             set({ user: null, loading: false });
           }
         } catch (error) {
+          console.error(error);
           set({ user: null, loading: false });
         }
       }

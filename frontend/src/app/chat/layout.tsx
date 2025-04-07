@@ -1,12 +1,12 @@
 "use client"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "./_components/app-sidebar"
 import { IRoom, IUser } from "@/interfaces"
 import { useState } from "react"
 import SidebarPage from "./page"
 import withAuth from "@/hoc/withAuth"
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = () => {
 
   const [selectedUser, setSelectedUser] = useState<Omit<IUser, "password"> | null>(null)
   const [room, setRoom] = useState<IRoom | null>(null)

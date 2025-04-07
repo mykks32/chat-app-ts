@@ -1,6 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { getCookie } from "@/lib/session";
-
+import { IMessage } from "@/interfaces";
 const SOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
 let socket: Socket;
 
@@ -26,7 +26,7 @@ export const joinRoom = (roomId: string, userId: string) => {
 };
 
 export const onRoomMessages = (
-  callback: (data: { roomId: string; messages: any[] }) => void
+  callback: (data: { roomId: string; messages: IMessage[] }) => void
 ) => {
   if (socket) {
     socket.on("room_messages", callback);
@@ -43,7 +43,7 @@ export const sendMessage = (data: {
   }
 };
 
-export const onNewMessage = (callback: (message: any) => void) => {
+export const onNewMessage = (callback: (message: IMessage) => void) => {
   if (socket) {
     socket.on("new_message", callback);
   }

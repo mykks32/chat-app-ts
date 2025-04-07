@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCookie } from "./lib/session";
 
 const isLoginRegisterPage = (pathname: string) => {
   return pathname === "/login" || pathname === "/register";
