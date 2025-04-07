@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/store/auth.store";
 
 interface WithAuthProps {
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 const withAuth = <P extends WithAuthProps>(WrappedComponent: React.ComponentType<P>) => {

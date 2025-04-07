@@ -37,13 +37,13 @@ export default function ChatRoom({ selectedUser, room }: {
       setSocket(socket);
     };
     initSocket();
-  }, [selectedUser, room]);
+  }, [selectedUser, room, connectSocket]);
 
   React.useEffect(() => {
     if (socket && room && selectedUser) {
       joinRoom(room?.id, selectedUser?.id);
     }
-  }, [socket, room, selectedUser]);
+  }, [socket, room, selectedUser, joinRoom]);
 
   React.useEffect(() => {
     if (socket) {
@@ -54,7 +54,7 @@ export default function ChatRoom({ selectedUser, room }: {
         }
       });
     }
-  }, [socket]);
+  }, [socket, onRoomMessages, room?.id]);
 
   React.useEffect(() => {
     if (socket) {
@@ -65,14 +65,14 @@ export default function ChatRoom({ selectedUser, room }: {
         }
       });
     }
-  }, [socket]);
+  }, [socket, onNewMessage, room?.id]);
 
   React.useEffect(() => {
     return () => {
       removeAllListeners();
       disconnectSocket();
     };
-  }, []);
+  }, [removeAllListeners, disconnectSocket]);
   
 
   const handleSend = (e: React.FormEvent) => {
