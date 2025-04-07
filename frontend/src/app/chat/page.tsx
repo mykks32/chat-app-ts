@@ -10,8 +10,9 @@ import { UserNav } from "./_components/user-nav";
 import { IRoom, IUser, IMessage } from "@/interfaces";
 import socketService from "@/services/socket.service";
 import { Socket } from "socket.io-client";
+import withAuth from "@/hoc/withAuth";
 
-export default function ChatRoom({ selectedUser, room }: { 
+function ChatRoom({ selectedUser, room }: { 
   selectedUser: Omit<IUser, "password"> | null, 
   room: IRoom | null 
 }) {
@@ -173,3 +174,4 @@ export default function ChatRoom({ selectedUser, room }: {
     </div>
   );
 }
+export default withAuth(ChatRoom);
