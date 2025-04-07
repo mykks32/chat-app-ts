@@ -54,7 +54,7 @@ export function AppSidebar({ setSelectedUser, setRoom }: { setSelectedUser: (use
         <SidebarGroup className="h-full"> 
           <SidebarGroupContent className="h-full overflow-y-auto">
             <SidebarMenu>
-              {users?.map((user) => (
+              {users?.filter((user) => user.id !== currentUser?.id).map((user) => (
                 <SidebarMenuItem key={user.id}>
                   <SidebarMenuButton className={`hover:bg-gray-200 py-8 ${activeItem === user ? 'bg-gray-200' : ''}`} onClick={() => handleUserClick(user)}>
                     <div className="flex items-center space-x-4">

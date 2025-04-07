@@ -4,8 +4,9 @@ import { AppSidebar } from "./_components/app-sidebar"
 import { IRoom, IUser } from "@/interfaces"
 import { useState } from "react"
 import SidebarPage from "./page"
+import withAuth from "@/hoc/withAuth"
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+const Layout = ({ children }: { children: React.ReactNode }) => {
 
   const [selectedUser, setSelectedUser] = useState<Omit<IUser, "password"> | null>(null)
   const [room, setRoom] = useState<IRoom | null>(null)
@@ -14,7 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-full">
         {/* Sidebar */}
         <AppSidebar setSelectedUser={setSelectedUser} setRoom={setRoom} />
-        
+
         {/* Main content area */}
         <main className="flex flex-col gap-4 w-full">
           <SidebarPage selectedUser={selectedUser} room={room} />
@@ -23,3 +24,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </SidebarProvider>
   )
 }
+
+export default withAuth(Layout);

@@ -17,6 +17,7 @@ import { loginUserSchema } from "@/schemas"
 import type { z } from "zod"
 import { useMutation } from "@tanstack/react-query"
 import userService from "@/services/auth"
+import Link from "next/link"
 
 type LoginSchema = z.infer<typeof loginUserSchema>
 
@@ -33,7 +34,7 @@ export default function Login() {
             console.log("Login successful, redirecting...");
             setTimeout(() => {
                 window.location.href = "/";
-              }, 1000);
+            }, 1000);
         },
         onError: (error) => {
             console.error("Login failed:", error);
@@ -48,9 +49,12 @@ export default function Login() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex justify-center items-center h-screen px-4">
+            <div className="flex flex-col justify-center items-center h-screen px-4">
                 <Card className="w-full max-w-md sm:max-w-lg">
                     <CardHeader className="space-y-1">
+                        <Link href="/register" className="text-primary underline hover:text-primary/80 transition">
+                            ← Register
+                        </Link>
                         <CardTitle className="text-2xl">Login to your account</CardTitle>
                         <CardDescription>
                             Enter your email below to login to your account

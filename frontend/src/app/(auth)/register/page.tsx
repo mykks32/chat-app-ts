@@ -17,6 +17,7 @@ import { registerUserSchema } from "@/schemas"
 import type { z } from "zod"
 import { useMutation } from "@tanstack/react-query"
 import { registerUser } from "@/services/auth"
+import Link from "next/link"
 
 type RegisterSchema = z.infer<typeof registerUserSchema>
 
@@ -48,6 +49,9 @@ export default function CardsCreateAccount() {
             <div className="flex justify-center items-center h-screen px-4">
                 <Card className="w-full max-w-md sm:max-w-lg">
                     <CardHeader className="space-y-1">
+                        <Link href="/login" className="text-primary underline hover:text-primary/80 transition">
+                            ← Login
+                        </Link>
                         <CardTitle className="text-2xl">Create an account</CardTitle>
                         <CardDescription>
                             Enter your email below to create your account
