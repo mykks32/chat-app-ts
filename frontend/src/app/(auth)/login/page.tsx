@@ -52,9 +52,12 @@ export default function Login() {
             <div className="flex flex-col justify-center items-center h-screen px-4">
                 <Card className="w-full max-w-md sm:max-w-lg">
                     <CardHeader className="space-y-1">
-                        <Link href="/register" className="text-primary underline hover:text-primary/80 transition">
-                            ← Register
-                        </Link>
+                        <div className="flex">
+                            Don&apos;t have an account? &nbsp;
+                            <Link href="/register" className="text-primary underline hover:text-primary/80 transition">
+                                Register
+                            </Link>
+                        </div>
                         <CardTitle className="text-2xl">Login to your account</CardTitle>
                         <CardDescription>
                             Enter your email below to login to your account
@@ -73,7 +76,9 @@ export default function Login() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" type="submit">Login</Button>
+                        <Button className="w-full" type="submit" disabled={mutate.isPending}>
+                            {mutate.isPending ? "Logging in..." : "Login"}
+                        </Button>
                     </CardFooter>
                 </Card>
             </div>
